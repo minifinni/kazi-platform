@@ -49,7 +49,7 @@ export default function HomePage() {
 
         {/* Hero Content */}
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight" style={{ fontFamily: "'Dogma', sans-serif" }}>
             Your Manufacturing Partner in Nepal
           </h1>
           <p className="text-lg md:text-xl mb-8 opacity-90 max-w-2xl mx-auto">
