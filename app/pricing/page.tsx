@@ -1,153 +1,86 @@
 import Navbar from '@/components/Navbar';
-import PricingCalculator from '@/components/PricingCalculator';
-import QuoteFormAdvanced from '@/components/QuoteFormAdvanced';
+import PricingQuoteSection from '@/components/PricingQuoteSection';
 
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      
+
       <div className="bg-gradient-to-br from-red-600 to-red-700 text-white py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl font-bold mb-4">Pricing</h1>
-          <p className="text-xl opacity-90">Transparent pricing. Volume discounts. Get an instant estimate.</p>
+          <h1 className="text-4xl font-bold mb-4">Get a Quote</h1>
+          <p className="text-xl opacity-90">Configure your order and request a quote in one step</p>
         </div>
       </div>
 
       <section className="py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Calculator */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Price Calculator</h2>
-              <PricingCalculator />
-            </div>
-
-            {/* Pricing Info */}
-            <div>
-              <h2 className="text-2xl font-bold mb-6">Volume Pricing</h2>
-              
-              <div className="space-y-6">
-                <div className="border rounded-xl overflow-hidden">
-                  <div className="bg-gray-50 px-6 py-4 border-b">
-                    <h3 className="font-bold">T-Shirts</h3>
-                  </div>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-sm text-gray-600 border-b">
-                        <th className="px-6 py-3 text-left">Quantity</th>
-                        <th className="px-6 py-3 text-right">Price/Unit</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      <tr className="border-b">
-                        <td className="px-6 py-3">50-99</td>
-                        <td className="px-6 py-3 text-right font-medium">£8.50</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">100-249</td>
-                        <td className="px-6 py-3 text-right font-medium">£6.50</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">250-499</td>
-                        <td className="px-6 py-3 text-right font-medium">£5.00</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">500-999</td>
-                        <td className="px-6 py-3 text-right font-medium">£4.00</td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-3">1000+</td>
-                        <td className="px-6 py-3 text-right font-medium">£3.20</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="border rounded-xl overflow-hidden">
-                  <div className="bg-gray-50 px-6 py-4 border-b">
-                    <h3 className="font-bold">Hoodies</h3>
-                  </div>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-sm text-gray-600 border-b">
-                        <th className="px-6 py-3 text-left">Quantity</th>
-                        <th className="px-6 py-3 text-right">Price/Unit</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      <tr className="border-b">
-                        <td className="px-6 py-3">50-99</td>
-                        <td className="px-6 py-3 text-right font-medium">£18.00</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">100-249</td>
-                        <td className="px-6 py-3 text-right font-medium">£14.50</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">250-499</td>
-                        <td className="px-6 py-3 text-right font-medium">£12.00</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">500-999</td>
-                        <td className="px-6 py-3 text-right font-medium">£10.00</td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-3">1000+</td>
-                        <td className="px-6 py-3 text-right font-medium">£8.50</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="border rounded-xl overflow-hidden">
-                  <div className="bg-gray-50 px-6 py-4 border-b">
-                    <h3 className="font-bold">Add-ons</h3>
-                  </div>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-sm text-gray-600 border-b">
-                        <th className="px-6 py-3 text-left">Service</th>
-                        <th className="px-6 py-3 text-right">Price/Unit</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-sm">
-                      <tr className="border-b">
-                        <td className="px-6 py-3">Embroidery (small)</td>
-                        <td className="px-6 py-3 text-right font-medium">+£2.50</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">Embroidery (large)</td>
-                        <td className="px-6 py-3 text-right font-medium">+£4.00</td>
-                      </tr>
-                      <tr className="border-b">
-                        <td className="px-6 py-3">Screen print (per colour)</td>
-                        <td className="px-6 py-3 text-right font-medium">+£1.50</td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-3">DTG print</td>
-                        <td className="px-6 py-3 text-right font-medium">+£3.50</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-                  <h4 className="font-bold text-blue-900 mb-2">Note</h4>
-                  <p className="text-sm text-blue-800">
-                    Prices are estimates and exclude shipping, customs, and any custom packaging. 
-                    Final quotes may vary based on specific requirements and fabric choices.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <PricingQuoteSection />
         </div>
       </section>
 
+      {/* Volume pricing reference */}
       <section className="py-12 px-4 bg-gray-50 border-t">
-        <div className="max-w-3xl mx-auto">
-          <QuoteFormAdvanced />
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-xl font-bold mb-6 text-gray-900">Volume pricing reference</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="border rounded-xl overflow-hidden bg-white">
+              <div className="bg-gray-50 px-6 py-4 border-b">
+                <h3 className="font-bold">T-Shirts</h3>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-500 border-b">
+                    <th className="px-6 py-3 text-left font-medium">Quantity</th>
+                    <th className="px-6 py-3 text-right font-medium">Per unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[['50–99', '£8.50'], ['100–249', '£6.50'], ['250–499', '£5.00'], ['500–999', '£4.00'], ['1000+', '£3.20']].map(([qty, price]) => (
+                    <tr key={qty} className="border-b last:border-0">
+                      <td className="px-6 py-3">{qty}</td>
+                      <td className="px-6 py-3 text-right font-medium">{price}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="border rounded-xl overflow-hidden bg-white">
+              <div className="bg-gray-50 px-6 py-4 border-b">
+                <h3 className="font-bold">Hoodies</h3>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-gray-500 border-b">
+                    <th className="px-6 py-3 text-left font-medium">Quantity</th>
+                    <th className="px-6 py-3 text-right font-medium">Per unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[['50–99', '£18.00'], ['100–249', '£14.50'], ['250–499', '£12.00'], ['500–999', '£10.00'], ['1000+', '£8.50']].map(([qty, price]) => (
+                    <tr key={qty} className="border-b last:border-0">
+                      <td className="px-6 py-3">{qty}</td>
+                      <td className="px-6 py-3 text-right font-medium">{price}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[['Embroidery (small)', '+£2.50'], ['Embroidery (large)', '+£4.00'], ['Screen print /colour', '+£1.50'], ['DTG print', '+£3.50']].map(([label, price]) => (
+              <div key={label} className="border rounded-lg px-4 py-3 bg-white text-sm">
+                <div className="text-gray-600">{label}</div>
+                <div className="font-semibold mt-0.5">{price}/unit</div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-xs text-gray-400 mt-4">
+            Prices are estimates and exclude shipping, customs, and custom packaging. Final quotes may vary.
+          </p>
         </div>
       </section>
 
