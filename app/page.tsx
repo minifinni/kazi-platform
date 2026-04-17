@@ -62,7 +62,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/pricing"
-              className="inline-block bg-orange-500 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-orange-600 transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105"
+              className="inline-block bg-red-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105"
             >
               See Pricing
             </Link>
@@ -124,7 +124,7 @@ export default function HomePage() {
               { title: 'DTF Transfers', desc: 'Vibrant colors on any fabric type', href: '/services/dtf' },
             ].map((method) => (
               <Link key={method.title} href={method.href} className="group">
-                <div className="bg-gray-50 rounded-xl p-6 text-center hover:bg-gray-100 transition-colors h-full border border-gray-200 hover:border-orange-300">
+                <div className="bg-gray-50 rounded-xl p-6 text-center hover:bg-gray-100 transition-colors h-full border border-gray-200 hover:border-red-300">
                   <h3 className="font-bold text-lg mb-2 text-gray-900">{method.title}</h3>
                   <p className="text-gray-600 text-sm">{method.desc}</p>
                 </div>
@@ -143,7 +143,7 @@ export default function HomePage() {
           </p>
           <Link
             href="/quote"
-            className="inline-block bg-orange-500 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-orange-600 transition-all duration-300 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105"
+            className="inline-block bg-red-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105"
           >
             Get a Quote
           </Link>

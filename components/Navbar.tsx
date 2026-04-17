@@ -64,7 +64,7 @@ export default function Navbar() {
             <>
               <Link 
                 href={getDashboardLink()}
-                className="text-orange-500 font-semibold hover:text-orange-600"
+                className="text-red-600 font-semibold hover:text-red-700"
               >
                 Dashboard
               </Link>
@@ -78,7 +78,7 @@ export default function Navbar() {
           ) : (
             <Link 
               href="/auth/login"
-              className="bg-orange-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-600"
+              className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700"
             >
               Login
             </Link>
@@ -115,7 +115,7 @@ export default function Navbar() {
               <>
                 <Link 
                   href={getDashboardLink()}
-                  className="text-orange-500 font-semibold hover:text-orange-600 py-2"
+                  className="text-red-600 font-semibold hover:text-red-700 py-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Dashboard
@@ -133,7 +133,7 @@ export default function Navbar() {
             ) : (
               <Link 
                 href="/auth/login"
-                className="bg-orange-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-orange-600 text-center"
+                className="bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Login

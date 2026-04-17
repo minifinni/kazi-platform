@@ -5,7 +5,7 @@ interface OrderStatusBadgeProps {
 const statusConfig: Record<string, { label: string; className: string }> = {
   ordered: { label: 'Ordered', className: 'bg-blue-100 text-blue-800' },
   cutting: { label: 'Cutting', className: 'bg-yellow-100 text-yellow-800' },
-  sewing: { label: 'Sewing', className: 'bg-orange-100 text-orange-800' },
+  sewing: { label: 'Sewing', className: 'bg-red-100 text-red-800' },
   printing: { label: 'Printing', className: 'bg-purple-100 text-purple-800' },
   qc: { label: 'Quality Check', className: 'bg-pink-100 text-pink-800' },
   shipping: { label: 'Shipping', className: 'bg-indigo-100 text-indigo-800' },

@@ -82,7 +82,7 @@ export default async function FactoryPage() {
             <div className="text-sm text-gray-600">New Orders</div>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-sm border">
-            <div className="text-2xl font-bold text-orange-600">
+            <div className="text-2xl font-bold text-red-700">
               {orders?.filter(o => ['cutting', 'sewing', 'printing'].includes(o.status)).length || 0}
             </div>
             <div className="text-sm text-gray-600">In Production</div>
