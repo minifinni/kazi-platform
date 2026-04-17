@@ -18,7 +18,6 @@ export default function ServicesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* T-Shirts */}
             <div className="border rounded-xl p-8">
-              <div className="text-4xl mb-4">👕</div>
               <h2 className="text-2xl font-bold mb-4">T-Shirts & Basics</h2>
               <p className="text-gray-600 mb-4">
                 We manufacture high-quality t-shirts in various weights (140gsm to 220gsm) and fabric 
@@ -34,7 +33,6 @@ export default function ServicesPage() {
 
             {/* Hoodies */}
             <div className="border rounded-xl p-8">
-              <div className="text-4xl mb-4">🧥</div>
               <h2 className="text-2xl font-bold mb-4">Hoodies & Outerwear</h2>
               <p className="text-gray-600 mb-4">
                 Premium hoodies, crewnecks, and zip-ups in various weights. Fully customisable 
@@ -50,7 +48,6 @@ export default function ServicesPage() {
 
             {/* Embroidery */}
             <div className="border rounded-xl p-8">
-              <div className="text-4xl mb-4">🪡</div>
               <h2 className="text-2xl font-bold mb-4">Embroidery</h2>
               <p className="text-gray-600 mb-4">
                 Professional embroidery for logos, badges, and decorative elements. We can 
@@ -66,7 +63,6 @@ export default function ServicesPage() {
 
             {/* Printing */}
             <div className="border rounded-xl p-8">
-              <div className="text-4xl mb-4">🎨</div>
               <h2 className="text-2xl font-bold mb-4">Screen & DTG Printing</h2>
               <p className="text-gray-600 mb-4">
                 Both screen printing (best for bulk orders) and Direct-to-Garment printing 
@@ -83,7 +79,6 @@ export default function ServicesPage() {
 
           {/* Private Label */}
           <div className="mt-12 border rounded-xl p-8 bg-gray-50">
-            <div className="text-4xl mb-4">🏷️</div>
             <h2 className="text-2xl font-bold mb-4">Private Label Service</h2>
             <p className="text-gray-600 mb-6">
               We offer complete private label solutions. Your brand, our manufacturing expertise.

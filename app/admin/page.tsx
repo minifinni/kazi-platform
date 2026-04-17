@@ -76,7 +76,6 @@ export default async function AdminPage() {
             href="/admin/orders"
             className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow"
           >
-            <div className="text-2xl mb-2">📦</div>
             <h3 className="font-bold">Manage Orders</h3>
             <p className="text-sm text-gray-600">View and update all orders</p>
           </Link>
@@ -84,7 +83,6 @@ export default async function AdminPage() {
             href="/admin/pricing"
             className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow"
           >
-            <div className="text-2xl mb-2">💰</div>
             <h3 className="font-bold">Manage Pricing</h3>
             <p className="text-sm text-gray-600">Update pricing tiers</p>
           </Link>
@@ -92,7 +90,6 @@ export default async function AdminPage() {
             href="/admin/users"
             className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md transition-shadow"
           >
-            <div className="text-2xl mb-2">👥</div>
             <h3 className="font-bold">Manage Users</h3>
             <p className="text-sm text-gray-600">View and manage users</p>
           </Link>

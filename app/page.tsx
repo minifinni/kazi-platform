@@ -9,25 +9,21 @@ const services = [
     title: 'T-Shirts & Basics',
     description: 'High-quality cotton and blended tees, from classic fits to modern cuts. Perfect for brands, events, and corporate wear.',
     image: '/images/tshirts.jpg',
-    icon: '👕',
   },
   {
     title: 'Hoodies & Outerwear',
     description: 'Premium hoodies, sweatshirts, and jackets with custom branding and detailing.',
     image: '/images/factory-1.jpg',
-    icon: '🧥',
   },
   {
     title: 'Embroidery & Print',
     description: 'High-quality embroidery, screen printing, and direct-to-garment printing services.',
     image: '/images/embroidery.jpg',
-    icon: '🧵',
   },
   {
     title: 'Private Label',
     description: 'Full private label service including custom tags, packaging, and branding.',
     image: '/images/factory-3.jpg',
-    icon: '🏷️',
   },
 ];
 
@@ -99,7 +95,6 @@ export default function HomePage() {
                 </div>
                 {/* Content */}
                 <div className="p-6">
-                  <div className="text-3xl mb-3">{service.icon}</div>
                   <h3 className="text-xl font-bold mb-2 text-gray-900">{service.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
                 </div>

@@ -28,7 +28,6 @@ export default function DTGPage() {
           </div>
           <div className="bg-gray-100 rounded-xl p-8 flex items-center justify-center">
             <div className="text-center text-gray-500">
-              <div className="text-6xl mb-4">🖨️</div>
               <p>DTG Printer</p>
             </div>
           </div>

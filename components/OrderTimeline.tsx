@@ -4,13 +4,13 @@ interface OrderTimelineProps {
 }
 
 const stages = [
-  { id: 'ordered', label: 'Ordered', icon: '📋' },
-  { id: 'cutting', label: 'Cutting', icon: '✂️' },
-  { id: 'sewing', label: 'Sewing', icon: '🧵' },
-  { id: 'printing', label: 'Printing', icon: '🎨' },
-  { id: 'qc', label: 'Quality Check', icon: '✅' },
-  { id: 'shipping', label: 'Shipping', icon: '📦' },
-  { id: 'delivered', label: 'Delivered', icon: '🚚' },
+  { id: 'ordered', label: 'Ordered' },
+  { id: 'cutting', label: 'Cutting' },
+  { id: 'sewing', label: 'Sewing' },
+  { id: 'printing', label: 'Printing' },
+  { id: 'qc', label: 'Quality Check' },
+  { id: 'shipping', label: 'Shipping' },
+  { id: 'delivered', label: 'Delivered' },
 ];
 
 export default function OrderTimeline({ currentStatus, updates = [] }: OrderTimelineProps) {
@@ -43,7 +43,7 @@ export default function OrderTimeline({ currentStatus, updates = [] }: OrderTime
                       : 'bg-white border-gray-300 text-gray-400'
                   }`}
                 >
-                  {isCompleted && !isCurrent ? '✓' : stage.icon}
+                  {isCompleted && !isCurrent ? '✓' : index + 1}
                 </div>
                 <span
                   className={`mt-2 text-xs font-medium text-center max-w-[80px] ${
