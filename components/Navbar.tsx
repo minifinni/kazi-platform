@@ -38,8 +38,8 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/services', label: 'Services' },
-    { href: '/pricing', label: 'Pricing' },
-    { href: '/quote', label: 'Quote' },
+    { href: '/pricing', label: 'Get a Quote' },
+    { href: '/quote', label: 'Contact Us' },
   ];
 
   return (

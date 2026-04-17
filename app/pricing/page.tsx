@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import PricingCalculator from '@/components/PricingCalculator';
+import QuoteFormAdvanced from '@/components/QuoteFormAdvanced';
 
 export default function PricingPage() {
   return (
@@ -141,6 +142,12 @@ export default function PricingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="py-12 px-4 bg-gray-50 border-t">
+        <div className="max-w-3xl mx-auto">
+          <QuoteFormAdvanced />
         </div>
       </section>
 

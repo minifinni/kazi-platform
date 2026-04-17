@@ -60,13 +60,13 @@ export default function HomePage() {
               href="/pricing"
               className="inline-block bg-red-600 text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-red-700 transition-all duration-300 shadow-lg shadow-red-600/30 hover:shadow-red-600/50 hover:scale-105"
             >
-              See Pricing
+              Get a Quote
             </Link>
             <Link
               href="/quote"
               className="inline-block bg-white/10 text-white px-10 py-4 rounded-lg font-semibold text-lg border-2 border-white/30 hover:bg-white/20 hover:border-white/50 transition-all duration-300"
             >
-              Get a Quote
+              Contact Us
             </Link>
           </div>
         </div>
