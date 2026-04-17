@@ -44,11 +44,11 @@ export default function HomePage() {
             src="/images/kazi-hero-mountain.jpg"
             alt="Kazi Manufacturing"
             fill
-            className="object-cover"
+            className="object-cover object-top"
             priority
+            quality={100}
           />
-          {/* Gradient Overlay - warm tones to match sunrise mountain */}
-          <div className="absolute inset-0 bg-gradient-to-b from-orange-900/30 via-blue-950/50 to-slate-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-teal-900/20 via-slate-900/50 to-slate-900/80" />
         </div>
 
         {/* Hero Content */}
