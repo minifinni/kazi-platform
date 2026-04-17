@@ -36,16 +36,11 @@ export default function RegisterPage() {
     if (error) {
       setError(error.message);
     } else {
-      // Send welcome email via Resend
-      try {
-        await fetch('/api/welcome-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, name: fullName }),
-        });
-      } catch (err) {
-        console.log('Welcome email failed (non-critical):', err);
-      }
+      fetch('/api/welcome-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: fullName }),
+      }).catch(() => {});
       setSuccess(true);
     }
     
