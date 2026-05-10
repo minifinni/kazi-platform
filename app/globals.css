@@ -14,6 +14,11 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 255, 255, 255;
   --background-end-rgb: 255, 255, 255;
+  --electric-red: #FF0000;
+  --accent-cyan: #00D4FF;
+  --dark-bg: #0A0A0B;
+  --dark-surface: #111114;
+  --dark-border: #1E1E24;
 }
 
 body {
@@ -30,4 +35,205 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* =============================================
+   FUTURISTIC ANIMATIONS
+   ============================================= */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px 0 rgba(255,0,0,0.4); }
+  50%       { box-shadow: 0 0 20px 4px rgba(255,0,0,0.7); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(255,0,0,0.4); }
+  50%       { border-color: rgba(255,0,0,0.9); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes gridFade {
+  from { opacity: 0; }
+  to   { opacity: 0.15; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.animate-count-up {
+  animation: countUp 0.5s ease forwards;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+
+/* =============================================
+   GRID OVERLAY TEXTURE
+   ============================================= */
+
+.grid-overlay {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.grid-overlay-fine {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* =============================================
+   SCAN-LINE EFFECT
+   ============================================= */
+
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.08) 2px,
+    rgba(0,0,0,0.08) 4px
+  );
+  z-index: 1;
+}
+
+/* =============================================
+   GLOW EFFECTS
+   ============================================= */
+
+.glow-red {
+  box-shadow: 0 0 12px rgba(255,0,0,0.5), 0 0 40px rgba(255,0,0,0.15);
+}
+
+.glow-red-hover:hover {
+  box-shadow: 0 0 16px rgba(255,0,0,0.6), 0 0 60px rgba(255,0,0,0.2);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 12px rgba(0,212,255,0.4), 0 0 40px rgba(0,212,255,0.1);
+}
+
+.text-glow-red {
+  text-shadow: 0 0 20px rgba(255,0,0,0.5);
+}
+
+/* =============================================
+   TECH CARD
+   ============================================= */
+
+.tech-card {
+  background: #111114;
+  border: 1px solid #1E1E24;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.tech-card:hover {
+  border-color: rgba(255,0,0,0.5);
+  box-shadow: 0 0 20px rgba(255,0,0,0.1), inset 0 0 30px rgba(255,0,0,0.04);
+}
+
+/* =============================================
+   MONOSPACE STAT READOUT
+   ============================================= */
+
+.stat-readout {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+}
+
+/* =============================================
+   SHARP UNDERLINE HOVER
+   ============================================= */
+
+.nav-link-underline {
+  position: relative;
+}
+
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #FF0000;
+  transition: width 0.2s ease;
+}
+
+.nav-link-underline:hover::after {
+  width: 100%;
+}
+
+/* =============================================
+   CORNER ACCENT
+   ============================================= */
+
+.corner-accent {
+  position: relative;
+}
+
+.corner-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-top: 1px solid #FF0000;
+  border-left: 1px solid #FF0000;
+}
+
+.corner-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  border-bottom: 1px solid #FF0000;
+  border-right: 1px solid #FF0000;
 }
