@@ -44,6 +44,7 @@ export default function Navbar() {
   };
 
   const navLinks = [
+    { href: '/configure', label: 'Configure' },
     { href: '/services', label: 'Services' },
     { href: '/pricing', label: 'Get a Quote' },
     { href: '/quote', label: 'Contact' },
@@ -59,11 +60,19 @@ export default function Navbar() {
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
         {/* Brand */}
-        <Link href="/" className="group flex items-center gap-2">
+        <Link href="/" className="group flex items-center gap-2.5">
           <span className="w-1.5 h-5 bg-[#FF0000] rounded-sm inline-block shrink-0 group-hover:shadow-[0_0_8px_rgba(255,0,0,0.7)] transition-shadow duration-200" />
+          <img
+            src="/logos/kazi-logo-white.png"
+            alt="Kazi Manufacturing"
+            className="h-8 w-auto"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <span className="sr-only">Kazi Manufacturing</span>
           <span
             className="text-white font-bold tracking-[0.15em] text-sm uppercase"
             style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+            aria-hidden="true"
           >
             KAZI MFG
           </span>
