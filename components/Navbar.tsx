@@ -44,6 +44,7 @@ export default function Navbar() {
   };
 
   const navLinks = [
+    { href: '/fabrics', label: 'Fabrics' },
     { href: '/services', label: 'Services' },
     { href: '/pricing', label: 'Get a Quote' },
     { href: '/quote', label: 'Contact' },
@@ -61,9 +62,20 @@ export default function Navbar() {
         {/* Brand */}
         <Link href="/" className="group flex items-center gap-2">
           <span className="w-1.5 h-5 bg-[#FF0000] rounded-sm inline-block shrink-0 group-hover:shadow-[0_0_8px_rgba(255,0,0,0.7)] transition-shadow duration-200" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logos/kazi-logo-white.png"
+            alt="Kazi Manufacturing"
+            className="h-8 w-auto"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              const sibling = e.currentTarget.nextSibling as HTMLElement | null;
+              if (sibling) sibling.style.display = 'block';
+            }}
+          />
           <span
-            className="text-white font-bold tracking-[0.15em] text-sm uppercase"
-            style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+            style={{ display: 'none', fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+            className="font-mono text-sm tracking-widest text-white"
           >
             KAZI MFG
           </span>

@@ -82,6 +82,13 @@ body {
   to   { opacity: 0.15; }
 }
 
+@keyframes fabricScan {
+  0%   { top: -4px; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
 .animate-fade-in-up {
   animation: fadeInUp 0.7s ease forwards;
 }
