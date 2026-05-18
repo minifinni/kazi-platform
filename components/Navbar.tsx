@@ -60,11 +60,21 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-4 flex justify-between items-center">
         {/* Brand */}
         <Link href="/" className="group flex items-center gap-2">
-          <span className="w-1.5 h-5 bg-[#FF0000] rounded-sm inline-block shrink-0 group-hover:shadow-[0_0_8px_rgba(255,0,0,0.7)] transition-shadow duration-200" />
+          {/* Logo image: white version for dark navbar. Falls back silently if file not yet present. */}
+          <img
+            src="/logos/kazi-logo-white.png"
+            alt="Kazi Manufacturing"
+            className="h-8 w-auto"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
+          <span className="sr-only">Kazi Manufacturing</span>
+          {/* Text fallback — visible when logo image is missing */}
           <span
-            className="text-white font-bold tracking-[0.15em] text-sm uppercase"
+            aria-hidden="true"
+            className="text-white font-bold tracking-[0.15em] text-sm uppercase flex items-center gap-2"
             style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
           >
+            <span className="w-1.5 h-5 bg-[#FF0000] rounded-sm inline-block shrink-0 group-hover:shadow-[0_0_8px_rgba(255,0,0,0.7)] transition-shadow duration-200" />
             KAZI MFG
           </span>
         </Link>
