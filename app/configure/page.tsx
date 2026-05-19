@@ -5,8 +5,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-// Flip to true once tshirt.glb / hoodie.glb / sweatshirt.glb are in /public/models/
-const MODELS_READY = false;
+const MODELS_READY = true;
 
 const GarmentViewer = dynamic(() => import('@/components/GarmentViewer'), {
   ssr: false,
