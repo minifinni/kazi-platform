@@ -153,9 +153,10 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {services.map((service) => (
-              <div
+              <Link
                 key={service.title}
-                className="tech-card corner-accent group relative p-6 flex flex-col gap-3"
+                href="/configure"
+                className="tech-card corner-accent group relative p-6 flex flex-col gap-3 cursor-pointer"
               >
                 <div
                   className="text-[10px] text-gray-600 tracking-widest"
@@ -176,7 +177,7 @@ export default function HomePage() {
                 </span>
                 {/* Bottom hover line */}
                 <div className="absolute bottom-0 left-0 right-0 h-px bg-[#E5232A] scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
-              </div>
+              </Link>
             ))}
           </div>
         </div>

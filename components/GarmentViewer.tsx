@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, OrbitControls, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
@@ -11,19 +11,22 @@ function garmentUrl(garment: string): string {
 
 function GarmentMesh({ url, colour }: { url: string; colour: string }) {
   const { scene } = useGLTF(url)
+  // Clone so switching garments doesn't re-use an already-parented scene object
+  const cloned = useMemo(() => scene.clone(true), [scene])
   const groupRef = useRef<THREE.Group>(null)
 
   useEffect(() => {
     const c = new THREE.Color(colour)
-    scene.traverse((child) => {
+    cloned.traverse((child) => {
       const mesh = child as THREE.Mesh
       if (mesh.isMesh && mesh.material) {
-        const mat = mesh.material as THREE.MeshStandardMaterial
+        const mat = (mesh.material as THREE.MeshStandardMaterial).clone()
         mat.color.set(c)
         mat.needsUpdate = true
+        mesh.material = mat
       }
     })
-  }, [scene, colour])
+  }, [cloned, colour])
 
   useFrame(({ clock }) => {
     if (groupRef.current) {
@@ -34,7 +37,7 @@ function GarmentMesh({ url, colour }: { url: string; colour: string }) {
   return (
     <primitive
       ref={groupRef}
-      object={scene}
+      object={cloned}
       scale={1.4}
       position={[0, -0.38, 0]}
     />
