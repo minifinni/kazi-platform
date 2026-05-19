@@ -2,7 +2,22 @@
 
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
+
+// Flip to true once tshirt.glb / hoodie.glb / sweatshirt.glb are in /public/models/
+const MODELS_READY = false;
+
+const GarmentViewer = dynamic(() => import('@/components/GarmentViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <span className="text-[10px] text-[#E5232A] tracking-[0.2em] uppercase animate-pulse font-mono">
+        LOADING…
+      </span>
+    </div>
+  ),
+});
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -57,7 +72,7 @@ export default function ConfigurePage() {
   const [dragOver, setDragOver]   = useState(false);
   const [garment, setGarment]     = useState<string>('t-shirt');
   const [fabric, setFabric]       = useState<string>('cotton-180');
-  const [colour, setColour]       = useState<string>('#000000');
+  const [colour, setColour]       = useState<string>('#3D3D3D');
   const [placement, setPlacement] = useState<string>('front-chest');
   const [qty, setQty]             = useState<number>(100);
 
@@ -148,7 +163,7 @@ export default function ConfigurePage() {
                   Step 1 — Your Pattern
                 </h2>
                 <p className="text-gray-500 text-sm mb-6">
-                  Upload your 2D tech pack and we&apos;ll generate a 3D model. Or choose a standard base garment.
+                  Upload your 2D tech pack and we&apos;ll send you a 3D render within 24 hours. Or configure from a standard base garment now.
                 </p>
 
                 {/* Mode toggle */}
@@ -211,7 +226,7 @@ export default function ConfigurePage() {
                           <div className="mt-3 text-[11px] text-[#E5232A]/70 tracking-widest uppercase"
                             style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
                           >
-                            Will be processed into 3D model via Blender
+                            3D render sent within 24 hours
                           </div>
                         </div>
                       ) : (
@@ -240,9 +255,9 @@ export default function ConfigurePage() {
                         What happens next
                       </div>
                       <ul className="text-xs text-gray-400 space-y-1">
-                        <li>→ Your 2D pattern panels are read and reconstructed in 3D</li>
-                        <li>→ A render is generated showing the garment in your chosen fabric</li>
-                        <li>→ You approve before we cut a single piece of cloth</li>
+                        <li>→ Your pattern file is securely sent to our production team</li>
+                        <li>→ We reconstruct it in 3D using professional garment software</li>
+                        <li>→ You receive a render for approval within 24 hours — before we cut a single piece</li>
                       </ul>
                     </div>
                   </div>
@@ -585,19 +600,25 @@ export default function ConfigurePage() {
               {/* Subtle grid inside panel */}
               <div className="absolute inset-0 grid-overlay-fine opacity-60" />
 
-              {/* 3D viewer placeholder */}
-              <div className="relative z-10 w-full flex flex-col items-center justify-center gap-4 py-10" style={{ height: '340px' }}>
-                <div className="relative w-28 h-36 opacity-20" aria-hidden="true">
-                  <div className="absolute inset-4 border border-[#E5232A]" style={{ animation: 'slowRotate 16s linear infinite', transformStyle: 'preserve-3d' }} />
-                  <div className="absolute top-0 left-7 right-7 h-5 border border-[#E5232A] border-b-0" style={{ animation: 'slowRotate 16s linear infinite' }} />
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-9 h-3 border border-[#E5232A] rounded-b-full" style={{ animation: 'slowRotate 16s linear infinite' }} />
-                </div>
-                <div className="text-[11px] text-[#E5232A] tracking-[0.2em] uppercase" style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}>
+              {/* 3D viewer — live when MODELS_READY, placeholder until then */}
+              <div className="relative z-10 w-full" style={{ height: '340px' }}>
+                <div className="absolute top-2 left-3 text-[10px] text-[#E5232A] tracking-[0.2em] uppercase z-20 font-mono">
                   3D PREVIEW
                 </div>
-                <p className="text-gray-600 text-sm max-w-xs text-center leading-relaxed">
-                  3D renderer coming soon
-                </p>
+                {MODELS_READY && inputMode === 'standard' ? (
+                  <GarmentViewer garment={garment} colour={colour} />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                    <div className="relative w-28 h-36 opacity-20" aria-hidden="true">
+                      <div className="absolute inset-4 border border-[#E5232A]" style={{ animation: 'slowRotate 16s linear infinite', transformStyle: 'preserve-3d' }} />
+                      <div className="absolute top-0 left-7 right-7 h-5 border border-[#E5232A] border-b-0" style={{ animation: 'slowRotate 16s linear infinite' }} />
+                      <div className="absolute top-2 left-1/2 -translate-x-1/2 w-9 h-3 border border-[#E5232A] rounded-b-full" style={{ animation: 'slowRotate 16s linear infinite' }} />
+                    </div>
+                    <p className="text-gray-600 text-sm font-mono">
+                      {inputMode === 'upload' ? '3D render sent within 24 hrs' : '3D preview coming soon'}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Live config echo */}
