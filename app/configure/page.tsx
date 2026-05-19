@@ -2,7 +2,20 @@
 
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
+
+const GarmentViewer = dynamic(() => import('@/components/GarmentViewer'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center">
+      <span className="text-[10px] text-[#E5232A] tracking-[0.2em] uppercase animate-pulse"
+        style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}>
+        LOADING RENDERER…
+      </span>
+    </div>
+  ),
+});
 
 // ── Data ─────────────────────────────────────────────────────────────────────
 
@@ -585,33 +598,20 @@ export default function ConfigurePage() {
               {/* Subtle grid inside panel */}
               <div className="absolute inset-0 grid-overlay-fine opacity-60" />
 
-              {/* Wireframe decoration inside panel */}
-              <div className="relative z-10 flex flex-col items-center gap-6 py-12 px-8 text-center">
-                {/* Mini rotating wireframe */}
-                <div className="relative w-32 h-40 opacity-20" aria-hidden="true">
-                  <div className="absolute inset-4 border border-[#E5232A]" style={{ animation: 'slowRotate 16s linear infinite', transformStyle: 'preserve-3d' }} />
-                  <div className="absolute top-0 left-8 right-8 h-6 border border-[#E5232A] border-b-0" style={{ animation: 'slowRotate 16s linear infinite' }} />
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-3 border border-[#E5232A] rounded-b-full" style={{ animation: 'slowRotate 16s linear infinite' }} />
-                </div>
-
+              {/* 3D viewer */}
+              <div className="relative z-10 w-full" style={{ height: '340px' }}>
                 <div
-                  className="text-[11px] text-[#E5232A] tracking-[0.2em] uppercase"
+                  className="absolute top-2 left-3 text-[10px] text-[#E5232A] tracking-[0.2em] uppercase z-20"
                   style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
                 >
                   3D PREVIEW
                 </div>
-                <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-                  3D viewer coming soon — connect Blender MCP to enable
-                </p>
-                <div
-                  className="px-4 py-2 border border-[#E5232A]/30 text-[10px] text-gray-600 tracking-widest uppercase"
-                  style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
-                >
-                  RENDERER OFFLINE
-                </div>
+                <GarmentViewer garment={garment} colour={colour} />
+              </div>
 
-                {/* Live config echo */}
-                <div className="w-full mt-4 border border-[#1E1E24] bg-[#0A0A0B] p-4 text-left">
+              {/* Live config echo */}
+              <div className="relative z-10 w-full px-6 pb-6">
+                <div className="border border-[#1E1E24] bg-[#0A0A0B] p-4 text-left">
                   <div
                     className="text-[10px] text-gray-600 tracking-widest uppercase mb-3"
                     style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
