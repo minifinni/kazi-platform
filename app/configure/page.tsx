@@ -51,12 +51,27 @@ function pricePerUnit(qty: number): number {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function ConfigurePage() {
-  const [step, setStep]         = useState(1);
-  const [garment, setGarment]   = useState<string>('t-shirt');
-  const [fabric, setFabric]     = useState<string>('cotton-180');
-  const [colour, setColour]     = useState<string>('#000000');
+  const [step, setStep]           = useState(1);
+  const [inputMode, setInputMode] = useState<'upload' | 'standard'>('upload');
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [dragOver, setDragOver]   = useState(false);
+  const [garment, setGarment]     = useState<string>('t-shirt');
+  const [fabric, setFabric]       = useState<string>('cotton-180');
+  const [colour, setColour]       = useState<string>('#000000');
   const [placement, setPlacement] = useState<string>('front-chest');
-  const [qty, setQty]           = useState<number>(100);
+  const [qty, setQty]             = useState<number>(100);
+
+  function handleFileDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) setUploadedFile(file);
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) setUploadedFile(file);
+  }
 
   const ppu = pricePerUnit(qty);
   const totalGBP = (ppu * qty).toFixed(2);
@@ -112,7 +127,7 @@ export default function ConfigurePage() {
                   {n}
                 </span>
                 <span className="hidden sm:inline">
-                  {['Garment', 'Fabric', 'Colour', 'Logo', 'Quantity'][n - 1]}
+                  {['Pattern', 'Fabric', 'Colour', 'Logo', 'Quantity'][n - 1]}
                 </span>
               </div>
               {n < 5 && <div className={`h-px flex-1 transition-colors duration-200 ${step > n ? 'bg-[#E5232A]/40' : 'bg-[#1E1E24]'}`} />}
@@ -126,45 +141,158 @@ export default function ConfigurePage() {
           {/* ── LEFT: Config form ── */}
           <div className="space-y-0">
 
-            {/* STEP 1 — Garment type */}
+            {/* STEP 1 — Pattern */}
             {step === 1 && (
               <div className="animate-fade-in">
-                <h2 className="text-lg font-bold text-white mb-6">
-                  Step 1 — Choose Garment Type
+                <h2 className="text-lg font-bold text-white mb-2">
+                  Step 1 — Your Pattern
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {GARMENT_TYPES.map((g) => (
-                    <button
-                      key={g.id}
-                      onClick={() => setGarment(g.id)}
-                      className={`tech-card relative p-6 text-left transition-all duration-200 ${
-                        garment === g.id
-                          ? 'border-[#E5232A] bg-[#E5232A]/5 shadow-[0_0_16px_rgba(229,35,42,0.15)]'
-                          : 'hover:border-[#E5232A]/40'
+                <p className="text-gray-500 text-sm mb-6">
+                  Upload your 2D tech pack and we&apos;ll generate a 3D model. Or choose a standard base garment.
+                </p>
+
+                {/* Mode toggle */}
+                <div className="flex gap-0 mb-6 border border-[#1E1E24]">
+                  <button
+                    onClick={() => setInputMode('upload')}
+                    className={`flex-1 py-2.5 text-xs font-semibold tracking-widest uppercase transition-all duration-200 ${
+                      inputMode === 'upload'
+                        ? 'bg-[#E5232A] text-white'
+                        : 'bg-transparent text-gray-500 hover:text-white'
+                    }`}
+                    style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                  >
+                    Upload Pattern
+                  </button>
+                  <button
+                    onClick={() => setInputMode('standard')}
+                    className={`flex-1 py-2.5 text-xs font-semibold tracking-widest uppercase transition-all duration-200 ${
+                      inputMode === 'standard'
+                        ? 'bg-[#E5232A] text-white'
+                        : 'bg-transparent text-gray-500 hover:text-white'
+                    }`}
+                    style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                  >
+                    Standard Garment
+                  </button>
+                </div>
+
+                {/* ── Upload mode ── */}
+                {inputMode === 'upload' && (
+                  <div>
+                    <div
+                      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                      onDragLeave={() => setDragOver(false)}
+                      onDrop={handleFileDrop}
+                      className={`relative border-2 border-dashed rounded-none p-10 text-center transition-all duration-200 cursor-pointer ${
+                        dragOver
+                          ? 'border-[#E5232A] bg-[#E5232A]/5'
+                          : uploadedFile
+                          ? 'border-[#E5232A]/60 bg-[#E5232A]/5'
+                          : 'border-[#1E1E24] hover:border-[#E5232A]/40 bg-[#111114]'
                       }`}
                     >
+                      <input
+                        type="file"
+                        accept=".dxf,.pdf,.ai,.svg,.png,.jpg,.jpeg,.zip"
+                        onChange={handleFileInput}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      {uploadedFile ? (
+                        <div>
+                          <div className="text-[#E5232A] text-2xl mb-3">✓</div>
+                          <div className="text-white font-semibold text-sm mb-1">{uploadedFile.name}</div>
+                          <div
+                            className="text-gray-500 text-xs"
+                            style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                          >
+                            {(uploadedFile.size / 1024).toFixed(0)} KB · Pattern received
+                          </div>
+                          <div className="mt-3 text-[11px] text-[#E5232A]/70 tracking-widest uppercase"
+                            style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                          >
+                            Will be processed into 3D model via Blender
+                          </div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-gray-600 text-3xl mb-4">⊕</div>
+                          <div className="text-white text-sm font-semibold mb-2">
+                            Drop your tech pack here
+                          </div>
+                          <div className="text-gray-500 text-xs mb-4">
+                            or click to browse
+                          </div>
+                          <div
+                            className="text-[10px] text-gray-700 tracking-widest"
+                            style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                          >
+                            DXF · PDF · AI · SVG · PNG · ZIP
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-4 p-4 border border-[#1E1E24] bg-[#111114]">
                       <div
-                        className="text-[10px] text-gray-600 tracking-widest mb-3"
+                        className="text-[10px] text-gray-600 tracking-widest uppercase mb-2"
                         style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
                       >
-                        {g.code}
+                        What happens next
                       </div>
-                      <div className="text-2xl mb-2">
-                        {g.id === 't-shirt' ? '👕' : g.id === 'hoodie' ? '🧥' : '👔'}
-                      </div>
-                      <div className="text-base font-bold text-white">{g.label}</div>
-                      {garment === g.id && (
-                        <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#E5232A]" />
-                      )}
-                    </button>
-                  ))}
-                </div>
+                      <ul className="text-xs text-gray-400 space-y-1">
+                        <li>→ Your 2D pattern panels are read and reconstructed in 3D</li>
+                        <li>→ A render is generated showing the garment in your chosen fabric</li>
+                        <li>→ You approve before we cut a single piece of cloth</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Standard garment mode ── */}
+                {inputMode === 'standard' && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {GARMENT_TYPES.map((g) => (
+                      <button
+                        key={g.id}
+                        onClick={() => setGarment(g.id)}
+                        className={`tech-card relative p-6 text-left transition-all duration-200 ${
+                          garment === g.id
+                            ? 'border-[#E5232A] bg-[#E5232A]/5 shadow-[0_0_16px_rgba(229,35,42,0.15)]'
+                            : 'hover:border-[#E5232A]/40'
+                        }`}
+                      >
+                        <div
+                          className="text-[10px] text-gray-600 tracking-widest mb-3"
+                          style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                        >
+                          {g.code}
+                        </div>
+                        <div className="text-sm font-bold text-white mb-1">{g.label}</div>
+                        <div className="text-xs text-gray-600">Standard base pattern</div>
+                        {garment === g.id && (
+                          <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-[#E5232A]" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 <button
                   onClick={() => setStep(2)}
-                  className="mt-8 px-8 py-3 bg-[#E5232A] text-white text-sm font-semibold tracking-widest uppercase hover:bg-red-500 transition-all duration-200"
+                  disabled={inputMode === 'upload' && !uploadedFile}
+                  className={`mt-8 px-8 py-3 text-sm font-semibold tracking-widest uppercase transition-all duration-200 ${
+                    inputMode === 'upload' && !uploadedFile
+                      ? 'bg-[#1E1E24] text-gray-600 cursor-not-allowed'
+                      : 'bg-[#E5232A] text-white hover:bg-red-500'
+                  }`}
                 >
                   Next: Fabric →
                 </button>
+                {inputMode === 'upload' && !uploadedFile && (
+                  <p className="mt-2 text-[11px] text-gray-600" style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}>
+                    Upload a pattern file to continue
+                  </p>
+                )}
               </div>
             )}
 
