@@ -25,40 +25,38 @@ function placementTransform(placement: string): {
 }
 
 function GraphicDecal({ logoUrl, placement }: { logoUrl: string; placement: string }) {
-  const [tex, setTex] = useState<THREE.Texture | null>(null)
+  const [loaded, setLoaded] = useState<{ tex: THREE.Texture; aspect: number } | null>(null)
 
   useEffect(() => {
     let cancelled = false
     const loader = new THREE.TextureLoader()
     loader.load(
       logoUrl,
-      (loaded) => {
-        if (!cancelled) {
-          loaded.needsUpdate = true
-          setTex(loaded)
-        }
+      (t) => {
+        if (cancelled) return
+        t.needsUpdate = true
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const img = t.image as any
+        const aspect: number =
+          img?.width > 0 && img?.height > 0 ? img.width / img.height : 1
+        setLoaded({ tex: t, aspect })
       },
       undefined,
       (err) => console.warn('Logo texture failed to load', err),
     )
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [logoUrl])
 
-  if (!tex) return null
+  if (!loaded) return null
 
   const { pos, rot, w } = placementTransform(placement)
-  const aspect = tex.image?.width && tex.image?.height
-    ? tex.image.width / tex.image.height
-    : 1
-  const h = w / aspect
+  const h = w / loaded.aspect
 
   return (
     <mesh position={pos} rotation={new THREE.Euler(...rot)} renderOrder={10}>
       <planeGeometry args={[w, h]} />
       <meshBasicMaterial
-        map={tex}
+        map={loaded.tex}
         transparent
         alphaTest={0.04}
         depthWrite={false}
