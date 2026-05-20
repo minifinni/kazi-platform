@@ -73,6 +73,8 @@ export default function ConfigurePage() {
   const [fabric, setFabric]       = useState<string>('cotton-180');
   const [colour, setColour]       = useState<string>('#3D3D3D');
   const [placement, setPlacement] = useState<string>('front-chest');
+  const [logoFile, setLogoFile]   = useState<File | null>(null);
+  const [logoUrl, setLogoUrl]     = useState<string | undefined>(undefined);
   const [qty, setQty]             = useState<number>(100);
 
   function handleFileDrop(e: React.DragEvent) {
@@ -85,6 +87,20 @@ export default function ConfigurePage() {
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) setUploadedFile(file);
+  }
+
+  function handleLogoInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoFile(file);
+    if (logoUrl) URL.revokeObjectURL(logoUrl);
+    setLogoUrl(URL.createObjectURL(file));
+  }
+
+  function clearLogo() {
+    if (logoUrl) URL.revokeObjectURL(logoUrl);
+    setLogoFile(null);
+    setLogoUrl(undefined);
   }
 
   const ppu = pricePerUnit(qty);
@@ -405,9 +421,63 @@ export default function ConfigurePage() {
             {/* STEP 4 — Logo placement */}
             {step === 4 && (
               <div className="animate-fade-in">
-                <h2 className="text-lg font-bold text-white mb-6">
-                  Step 4 — Logo Placement
+                <h2 className="text-lg font-bold text-white mb-2">
+                  Step 4 — Logo &amp; Placement
                 </h2>
+                <p className="text-gray-500 text-sm mb-6">
+                  Upload your graphic — PNG or SVG with transparency works best. It will appear on the 3D preview instantly.
+                </p>
+
+                {/* Logo upload */}
+                <div className="mb-6">
+                  {logoFile ? (
+                    <div className="flex items-center gap-4 p-4 border border-[#E5232A]/40 bg-[#E5232A]/5">
+                      <img
+                        src={logoUrl}
+                        alt="logo preview"
+                        className="w-14 h-14 object-contain bg-white/5 border border-white/10 p-1"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-white text-sm font-semibold truncate">{logoFile.name}</div>
+                        <div className="text-gray-500 text-xs mt-0.5">{(logoFile.size / 1024).toFixed(0)} KB</div>
+                      </div>
+                      <button
+                        onClick={clearLogo}
+                        className="text-xs text-gray-500 hover:text-[#E5232A] transition-colors duration-200 tracking-widest uppercase shrink-0"
+                        style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="relative flex flex-col items-center justify-center gap-3 p-8 border-2 border-dashed border-[#1E1E24] hover:border-[#E5232A]/40 bg-[#111114] cursor-pointer transition-all duration-200">
+                      <input
+                        type="file"
+                        accept=".png,.jpg,.jpeg,.svg,.webp"
+                        onChange={handleLogoInput}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="text-gray-600 text-2xl">⊕</div>
+                      <div className="text-center">
+                        <div className="text-white text-sm font-semibold mb-1">Upload your graphic</div>
+                        <div
+                          className="text-[10px] text-gray-600 tracking-widest uppercase"
+                          style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                        >
+                          PNG · SVG · JPG · WEBP
+                        </div>
+                      </div>
+                    </label>
+                  )}
+                </div>
+
+                {/* Placement selector */}
+                <div
+                  className="text-[10px] text-gray-600 tracking-widest uppercase mb-3"
+                  style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
+                >
+                  Placement
+                </div>
                 <div className="space-y-3">
                   {PLACEMENTS.map((p) => (
                     <label
@@ -605,7 +675,7 @@ export default function ConfigurePage() {
                   3D PREVIEW
                 </div>
                 {MODELS_READY && inputMode === 'standard' ? (
-                  <GarmentViewer garment={garment} colour={colour} />
+                  <GarmentViewer garment={garment} colour={colour} logoUrl={logoUrl} placement={placement} />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-4">
                     <div className="relative w-28 h-36 opacity-20" aria-hidden="true">
