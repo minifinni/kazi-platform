@@ -1,7 +1,7 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useMemo } from 'react'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
+import { useEffect, useRef, useMemo, useState } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, OrbitControls, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -11,56 +11,60 @@ function garmentUrl(garment: string): string {
   return '/models/tshirt.glb'
 }
 
-// All positions + rotations are in group local space (group has scale=1.4).
-// Models are centred at origin after Blender recentre export.
-// After Blender Y-up GLTF export:
-//   Three.js +Z = front of garment (faces camera)
-//   Three.js +Y = up
-// Front shirt surface ≈ local Z +0.35; back ≈ local Z -0.35
+// Models are centred at origin after Blender recentre.
+// After Blender Y-up GLTF export: front of shirt faces +Z (toward camera at Z=2.4).
+// Front surface ≈ local Z +0.36. All positions are in group local space (group scale=1.4).
 function placementTransform(placement: string): {
   pos: [number, number, number]
   rot: [number, number, number]
   w: number
 } {
-  if (placement === 'back')
-    return { pos: [0, 0.06, -0.37], rot: [0, Math.PI, 0], w: 0.20 }
-  if (placement === 'sleeve')
-    return { pos: [0.32, 0.06, 0.08], rot: [0, -Math.PI / 2, 0], w: 0.10 }
-  // front-chest
-  return { pos: [0, 0.07, 0.37], rot: [0, 0, 0], w: 0.14 }
+  if (placement === 'back')   return { pos: [0, 0.06, -0.38], rot: [0, Math.PI, 0],        w: 0.20 }
+  if (placement === 'sleeve') return { pos: [0.33, 0.06, 0.08], rot: [0, -Math.PI / 2, 0], w: 0.10 }
+  return                             { pos: [0, 0.07, 0.38],    rot: [0, 0, 0],             w: 0.14 }
 }
 
-function GraphicDecal({
-  logoUrl,
-  placement,
-}: {
-  logoUrl: string
-  placement: string
-}) {
-  const texture = useLoader(THREE.TextureLoader, logoUrl)
-  const { pos, rot, w } = placementTransform(placement)
+function GraphicDecal({ logoUrl, placement }: { logoUrl: string; placement: string }) {
+  const [tex, setTex] = useState<THREE.Texture | null>(null)
 
-  const aspect =
-    texture.image && texture.image.width && texture.image.height
-      ? texture.image.width / texture.image.height
-      : 1
+  useEffect(() => {
+    let cancelled = false
+    const loader = new THREE.TextureLoader()
+    loader.load(
+      logoUrl,
+      (loaded) => {
+        if (!cancelled) {
+          loaded.needsUpdate = true
+          setTex(loaded)
+        }
+      },
+      undefined,
+      (err) => console.warn('Logo texture failed to load', err),
+    )
+    return () => {
+      cancelled = true
+    }
+  }, [logoUrl])
+
+  if (!tex) return null
+
+  const { pos, rot, w } = placementTransform(placement)
+  const aspect = tex.image?.width && tex.image?.height
+    ? tex.image.width / tex.image.height
+    : 1
   const h = w / aspect
 
   return (
-    <mesh
-      position={pos}
-      rotation={new THREE.Euler(...rot)}
-      renderOrder={1}
-    >
+    <mesh position={pos} rotation={new THREE.Euler(...rot)} renderOrder={10}>
       <planeGeometry args={[w, h]} />
       <meshBasicMaterial
-        map={texture}
+        map={tex}
         transparent
         alphaTest={0.04}
         depthWrite={false}
         polygonOffset
-        polygonOffsetFactor={-2}
-        polygonOffsetUnits={-2}
+        polygonOffsetFactor={-4}
+        polygonOffsetUnits={-4}
         side={THREE.FrontSide}
       />
     </mesh>
@@ -103,9 +107,7 @@ function GarmentMesh({
     <group ref={ref} scale={1.4} position={[0, -0.1, 0]}>
       <primitive object={cloned} />
       {logoUrl && placement && (
-        <Suspense fallback={null}>
-          <GraphicDecal logoUrl={logoUrl} placement={placement} />
-        </Suspense>
+        <GraphicDecal logoUrl={logoUrl} placement={placement} />
       )}
     </group>
   )
