@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useMemo } from 'react'
+import { Suspense, useEffect, useRef, useMemo } from 'react'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { useGLTF, OrbitControls, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
@@ -11,11 +11,23 @@ function garmentUrl(garment: string): string {
   return '/models/tshirt.glb'
 }
 
-// Position the graphic decal based on placement selection
-function placementPosition(placement: string): [number, number, number] {
-  if (placement === 'back')        return [0,    0.12, -0.32]
-  if (placement === 'sleeve')      return [0.28, 0.12,  0]
-  return [0, 0.12, 0.32] // front-chest (default)
+// All positions + rotations are in group local space (group has scale=1.4).
+// Models are centred at origin after Blender recentre export.
+// After Blender Y-up GLTF export:
+//   Three.js +Z = front of garment (faces camera)
+//   Three.js +Y = up
+// Front shirt surface ≈ local Z +0.35; back ≈ local Z -0.35
+function placementTransform(placement: string): {
+  pos: [number, number, number]
+  rot: [number, number, number]
+  w: number
+} {
+  if (placement === 'back')
+    return { pos: [0, 0.06, -0.37], rot: [0, Math.PI, 0], w: 0.20 }
+  if (placement === 'sleeve')
+    return { pos: [0.32, 0.06, 0.08], rot: [0, -Math.PI / 2, 0], w: 0.10 }
+  // front-chest
+  return { pos: [0, 0.07, 0.37], rot: [0, 0, 0], w: 0.14 }
 }
 
 function GraphicDecal({
@@ -26,23 +38,29 @@ function GraphicDecal({
   placement: string
 }) {
   const texture = useLoader(THREE.TextureLoader, logoUrl)
-  const pos = placementPosition(placement)
+  const { pos, rot, w } = placementTransform(placement)
 
-  // Square aspect — caller can upload any ratio; we constrain to 0.22 wide
-  const aspect = texture.image
-    ? texture.image.width / texture.image.height
-    : 1
-  const w = 0.22
+  const aspect =
+    texture.image && texture.image.width && texture.image.height
+      ? texture.image.width / texture.image.height
+      : 1
   const h = w / aspect
 
   return (
-    <mesh position={pos}>
+    <mesh
+      position={pos}
+      rotation={new THREE.Euler(...rot)}
+      renderOrder={1}
+    >
       <planeGeometry args={[w, h]} />
       <meshBasicMaterial
         map={texture}
         transparent
-        alphaTest={0.05}
+        alphaTest={0.04}
         depthWrite={false}
+        polygonOffset
+        polygonOffsetFactor={-2}
+        polygonOffsetUnits={-2}
         side={THREE.FrontSide}
       />
     </mesh>
@@ -85,7 +103,9 @@ function GarmentMesh({
     <group ref={ref} scale={1.4} position={[0, -0.1, 0]}>
       <primitive object={cloned} />
       {logoUrl && placement && (
-        <GraphicDecal logoUrl={logoUrl} placement={placement} />
+        <Suspense fallback={null}>
+          <GraphicDecal logoUrl={logoUrl} placement={placement} />
+        </Suspense>
       )}
     </group>
   )
@@ -112,7 +132,6 @@ export default function GarmentViewer({
       <ambientLight intensity={0.6} />
       <directionalLight position={[3, 5, 3]} intensity={1.8} />
       <directionalLight position={[-2, 2, -2]} intensity={0.4} />
-      {/* key={url} forces full unmount/remount on garment switch — prevents blank viewer */}
       <GarmentMesh key={url} url={url} colour={colour} logoUrl={logoUrl} placement={placement} />
       <ContactShadows position={[0, -0.55, 0]} opacity={0.3} blur={2.5} far={1} />
       <OrbitControls

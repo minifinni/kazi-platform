@@ -513,36 +513,44 @@ export default function ConfigurePage() {
                     </label>
                   ))}
                 </div>
-                {/* Placement diagram placeholder */}
-                <div className="mt-6 p-5 border border-[#1E1E24] bg-[#111114] text-center">
+                {/* SVG placement diagram */}
+                <div className="mt-6 p-5 border border-[#1E1E24] bg-[#111114]">
                   <div
-                    className="text-[10px] text-gray-600 tracking-widest uppercase mb-3"
+                    className="text-[10px] text-gray-600 tracking-widest uppercase mb-4 text-center"
                     style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}
                   >
-                    PLACEMENT DIAGRAM
+                    {placement === 'back' ? 'BACK VIEW' : 'FRONT VIEW'}
                   </div>
-                  <div className="inline-block relative">
-                    {/* T-shirt silhouette via CSS borders */}
-                    <div className="w-32 h-40 border border-gray-700 mx-auto relative">
-                      <div className="absolute -top-4 left-6 w-20 h-5 border border-gray-700 border-b-0" />
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 w-10 h-4 border border-gray-700 rounded-b-full" />
-                      {placement === 'front-chest' && (
-                        <div className="absolute top-4 left-3 w-6 h-6 border border-[#E5232A] flex items-center justify-center">
-                          <div className="w-2 h-2 bg-[#E5232A]" />
-                        </div>
-                      )}
-                      {placement === 'sleeve' && (
-                        <div className="absolute top-4 -left-8 w-6 h-6 border border-[#E5232A] flex items-center justify-center">
-                          <div className="w-2 h-2 bg-[#E5232A]" />
-                        </div>
-                      )}
-                    </div>
-                    {placement === 'back' && (
-                      <div className="text-[10px] text-[#E5232A] mt-2 tracking-widest" style={{ fontFamily: "'SF Mono','Fira Code','Consolas',monospace" }}>
-                        — BACK VIEW —
-                      </div>
+                  <svg viewBox="0 0 100 115" fill="none" className="w-36 h-40 mx-auto">
+                    {/* T-shirt silhouette */}
+                    <path
+                      d="M 20 20 L 2 42 L 17 48 L 17 105 L 83 105 L 83 48 L 98 42 L 80 20 C 70 11 65 17 60 17 C 55 17 52 21 50 21 C 48 21 45 17 40 17 C 35 17 30 11 20 20 Z"
+                      stroke="#374151"
+                      strokeWidth="1.5"
+                      fill="#111114"
+                    />
+                    {/* Front-chest indicator */}
+                    {placement === 'front-chest' && !logoUrl && (
+                      <rect x="35" y="38" width="15" height="15" stroke="#E5232A" strokeWidth="1" fill="#E5232A" fillOpacity="0.15" />
                     )}
-                  </div>
+                    {placement === 'front-chest' && logoUrl && (
+                      <image href={logoUrl} x="35" y="38" width="15" height="15" preserveAspectRatio="xMidYMid meet" />
+                    )}
+                    {/* Back indicator — show on shirt body with "BACK" note */}
+                    {placement === 'back' && !logoUrl && (
+                      <rect x="30" y="45" width="40" height="30" stroke="#E5232A" strokeWidth="1" fill="#E5232A" fillOpacity="0.10" strokeDasharray="3 2" />
+                    )}
+                    {placement === 'back' && logoUrl && (
+                      <image href={logoUrl} x="32" y="47" width="36" height="26" preserveAspectRatio="xMidYMid meet" />
+                    )}
+                    {/* Sleeve indicator */}
+                    {placement === 'sleeve' && !logoUrl && (
+                      <rect x="4" y="42" width="11" height="11" stroke="#E5232A" strokeWidth="1" fill="#E5232A" fillOpacity="0.15" />
+                    )}
+                    {placement === 'sleeve' && logoUrl && (
+                      <image href={logoUrl} x="4" y="42" width="11" height="11" preserveAspectRatio="xMidYMid meet" />
+                    )}
+                  </svg>
                 </div>
                 <div className="flex gap-3 mt-8">
                   <button onClick={() => setStep(3)} className="px-6 py-3 border border-[#1E1E24] text-sm text-gray-500 hover:text-white hover:border-white/30 transition-all duration-200 tracking-widest uppercase">
