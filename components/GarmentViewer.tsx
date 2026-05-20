@@ -1,72 +1,15 @@
 'use client'
 
-import { useEffect, useRef, useMemo, useState } from 'react'
+import { useEffect, useRef, useMemo } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF, OrbitControls, ContactShadows } from '@react-three/drei'
+import { DecalGeometry } from 'three-stdlib'
 import * as THREE from 'three'
 
 function garmentUrl(garment: string): string {
   if (garment === 'hoodie') return '/models/hoodie.glb'
   if (garment === 'sweatshirt') return '/models/sweatshirt.glb'
   return '/models/tshirt.glb'
-}
-
-// Models are centred at origin after Blender recentre.
-// After Blender Y-up GLTF export: front of shirt faces +Z (toward camera at Z=2.4).
-// Front surface ≈ local Z +0.36. All positions are in group local space (group scale=1.4).
-function placementTransform(placement: string): {
-  pos: [number, number, number]
-  rot: [number, number, number]
-  w: number
-} {
-  if (placement === 'back')   return { pos: [0, 0.06, -0.38], rot: [0, Math.PI, 0],        w: 0.20 }
-  if (placement === 'sleeve') return { pos: [0.33, 0.06, 0.08], rot: [0, -Math.PI / 2, 0], w: 0.10 }
-  return                             { pos: [0, 0.07, 0.38],    rot: [0, 0, 0],             w: 0.14 }
-}
-
-function GraphicDecal({ logoUrl, placement }: { logoUrl: string; placement: string }) {
-  const [loaded, setLoaded] = useState<{ tex: THREE.Texture; aspect: number } | null>(null)
-
-  useEffect(() => {
-    let cancelled = false
-    const loader = new THREE.TextureLoader()
-    loader.load(
-      logoUrl,
-      (t) => {
-        if (cancelled) return
-        t.needsUpdate = true
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const img = t.image as any
-        const aspect: number =
-          img?.width > 0 && img?.height > 0 ? img.width / img.height : 1
-        setLoaded({ tex: t, aspect })
-      },
-      undefined,
-      (err) => console.warn('Logo texture failed to load', err),
-    )
-    return () => { cancelled = true }
-  }, [logoUrl])
-
-  if (!loaded) return null
-
-  const { pos, rot, w } = placementTransform(placement)
-  const h = w / loaded.aspect
-
-  return (
-    <mesh position={pos} rotation={new THREE.Euler(...rot)} renderOrder={10}>
-      <planeGeometry args={[w, h]} />
-      <meshBasicMaterial
-        map={loaded.tex}
-        transparent
-        alphaTest={0.04}
-        depthWrite={false}
-        polygonOffset
-        polygonOffsetFactor={-4}
-        polygonOffsetUnits={-4}
-        side={THREE.FrontSide}
-      />
-    </mesh>
-  )
 }
 
 function GarmentMesh({
@@ -83,7 +26,10 @@ function GarmentMesh({
   const { scene } = useGLTF(url)
   const cloned = useMemo(() => scene.clone(true), [scene])
   const ref = useRef<THREE.Group>(null)
+  const decalRef = useRef<THREE.Mesh | null>(null)
+  const pendingTex = useRef<THREE.Texture | null>(null)
 
+  // Apply colour to all garment meshes
   useEffect(() => {
     const c = new THREE.Color(colour)
     cloned.traverse((child) => {
@@ -97,16 +43,102 @@ function GarmentMesh({
     })
   }, [cloned, colour])
 
+  // Load logo texture — on success, signal useFrame to bake the decal
+  useEffect(() => {
+    // Remove any existing decal
+    if (decalRef.current) {
+      decalRef.current.parent?.remove(decalRef.current)
+      decalRef.current.geometry.dispose()
+      decalRef.current = null
+    }
+    pendingTex.current = null
+    if (!logoUrl) return
+
+    const loader = new THREE.TextureLoader()
+    loader.load(
+      logoUrl,
+      (tex) => { tex.needsUpdate = true; pendingTex.current = tex },
+      undefined,
+      (err) => console.warn('logo load failed', err),
+    )
+  }, [logoUrl])
+
   useFrame(({ clock }) => {
-    if (ref.current) ref.current.rotation.y = Math.sin(clock.elapsedTime * 0.25) * 0.35
+    if (!ref.current) return
+    const rotY = Math.sin(clock.elapsedTime * 0.25) * 0.35
+    ref.current.rotation.y = rotY
+
+    // Bake DecalGeometry onto the shirt surface on the first frame after texture loads
+    if (!pendingTex.current) return
+    const tex = pendingTex.current
+    pendingTex.current = null
+
+    // Find the first Mesh inside the cloned scene
+    let target: THREE.Mesh | null = null
+    ref.current.traverse((o) => {
+      const m = o as THREE.Mesh
+      if (m.isMesh && !target) target = m
+    })
+    if (!target) return
+
+    // Temporarily zero rotation so the bounding box is axis-aligned (front = +Z)
+    ref.current.rotation.y = 0
+    ref.current.updateWorldMatrix(true, true)
+
+    const box = new THREE.Box3().setFromObject(ref.current)
+    const shirtWidth = box.max.x - box.min.x
+    const logoSize = shirtWidth * 0.24
+    const projDepth = (box.max.z - box.min.z) * 2 + 0.5  // generous depth so rays pierce mesh
+
+    // World-space position of the front-chest area
+    const midY = (box.min.y + box.max.y) / 2
+    const chestY = midY + (box.max.y - midY) * 0.25
+
+    let wPos: THREE.Vector3
+    let wRot: THREE.Euler
+    if (placement === 'back') {
+      wPos = new THREE.Vector3(0, chestY, box.min.z - 0.01)
+      wRot = new THREE.Euler(0, Math.PI, 0)
+    } else if (placement === 'sleeve') {
+      wPos = new THREE.Vector3(box.max.x * 0.8, chestY, (box.min.z + box.max.z) / 2)
+      wRot = new THREE.Euler(0, -Math.PI / 2, 0)
+    } else {
+      wPos = new THREE.Vector3(0, chestY, box.max.z + 0.01)
+      wRot = new THREE.Euler(0, 0, 0)
+    }
+
+    const size = new THREE.Vector3(logoSize, logoSize, projDepth)
+
+    // Build decal geometry — vertices come out in world space
+    const decalGeo = new DecalGeometry(target, wPos, wRot, size)
+
+    // Convert to target mesh local space so it rotates with the shirt
+    const invWorld = (target as THREE.Mesh).matrixWorld.clone().invert()
+    decalGeo.applyMatrix4(invWorld)
+
+    const mat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
+      alphaTest: 0.04,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      polygonOffsetUnits: -4,
+    })
+
+    const decalMesh = new THREE.Mesh(decalGeo, mat)
+    decalMesh.renderOrder = 10
+    ;(target as THREE.Mesh).add(decalMesh)
+    decalRef.current = decalMesh
+
+    // Restore rotation
+    ref.current.rotation.y = rotY
+    ref.current.updateWorldMatrix(true, true)
   })
 
   return (
     <group ref={ref} scale={1.4} position={[0, -0.1, 0]}>
       <primitive object={cloned} />
-      {logoUrl && placement && (
-        <GraphicDecal logoUrl={logoUrl} placement={placement} />
-      )}
     </group>
   )
 }
