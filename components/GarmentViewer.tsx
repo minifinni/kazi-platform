@@ -8,7 +8,6 @@ import * as THREE from 'three'
 
 function garmentUrl(garment: string): string {
   if (garment === 'hoodie') return '/models/hoodie.glb'
-  if (garment === 'sweatshirt') return '/models/sweatshirt.glb'
   return '/models/tshirt.glb'
 }
 
@@ -27,9 +26,11 @@ function GarmentMesh({
   const cloned = useMemo(() => scene.clone(true), [scene])
   const ref = useRef<THREE.Group>(null)
   const decalRef = useRef<THREE.Mesh | null>(null)
+  // loadedTex persists across placement changes; pendingTex triggers re-bake
+  const loadedTex = useRef<THREE.Texture | null>(null)
   const pendingTex = useRef<THREE.Texture | null>(null)
 
-  // Apply colour to all garment meshes
+  // Colour
   useEffect(() => {
     const c = new THREE.Color(colour)
     cloned.traverse((child) => {
@@ -43,37 +44,53 @@ function GarmentMesh({
     })
   }, [cloned, colour])
 
-  // Load logo texture — on success, signal useFrame to bake the decal
+  // Load texture when logo URL changes
   useEffect(() => {
-    // Remove any existing decal
-    if (decalRef.current) {
-      decalRef.current.parent?.remove(decalRef.current)
-      decalRef.current.geometry.dispose()
-      decalRef.current = null
-    }
+    clearDecal()
+    loadedTex.current = null
     pendingTex.current = null
     if (!logoUrl) return
 
     const loader = new THREE.TextureLoader()
     loader.load(
       logoUrl,
-      (tex) => { tex.needsUpdate = true; pendingTex.current = tex },
+      (tex) => {
+        tex.needsUpdate = true
+        loadedTex.current = tex
+        pendingTex.current = tex
+      },
       undefined,
       (err) => console.warn('logo load failed', err),
     )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [logoUrl])
+
+  // Re-bake when placement changes (texture already loaded)
+  useEffect(() => {
+    if (!loadedTex.current) return
+    clearDecal()
+    pendingTex.current = loadedTex.current
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placement])
+
+  function clearDecal() {
+    if (decalRef.current) {
+      decalRef.current.parent?.remove(decalRef.current)
+      decalRef.current.geometry.dispose()
+      decalRef.current = null
+    }
+  }
 
   useFrame(({ clock }) => {
     if (!ref.current) return
     const rotY = Math.sin(clock.elapsedTime * 0.25) * 0.35
     ref.current.rotation.y = rotY
 
-    // Bake DecalGeometry onto the shirt surface on the first frame after texture loads
     if (!pendingTex.current) return
     const tex = pendingTex.current
     pendingTex.current = null
 
-    // Find the first Mesh inside the cloned scene
+    // Find shirt mesh
     let target: THREE.Mesh | null = null
     ref.current.traverse((o) => {
       const m = o as THREE.Mesh
@@ -81,43 +98,47 @@ function GarmentMesh({
     })
     if (!target) return
 
-    // Temporarily zero rotation so the bounding box is axis-aligned (front = +Z)
+    // Zero rotation for correct axis-aligned bounding box (front = +Z)
     ref.current.rotation.y = 0
     ref.current.updateWorldMatrix(true, true)
 
     const box = new THREE.Box3().setFromObject(ref.current)
     const shirtWidth = box.max.x - box.min.x
     const logoSize = shirtWidth * 0.24
-    const projDepth = (box.max.z - box.min.z) * 2 + 0.5  // generous depth so rays pierce mesh
-
-    // World-space position of the front-chest area
+    const projDepth = (box.max.z - box.min.z) * 2 + 0.5
     const midY = (box.min.y + box.max.y) / 2
-    const chestY = midY + (box.max.y - midY) * 0.25
 
     let wPos: THREE.Vector3
     let wRot: THREE.Euler
+    let finalTex = tex
+
     if (placement === 'back') {
-      wPos = new THREE.Vector3(0, chestY, box.min.z - 0.01)
+      // Lower on back — use 10% below midY rather than above (avoids hood on hoodie)
+      const backY = midY - (box.max.y - box.min.y) * 0.05
+      wPos = new THREE.Vector3(0, backY, box.min.z - 0.01)
       wRot = new THREE.Euler(0, Math.PI, 0)
-    } else if (placement === 'sleeve') {
-      wPos = new THREE.Vector3(box.max.x * 0.8, chestY, (box.min.z + box.max.z) / 2)
-      wRot = new THREE.Euler(0, -Math.PI / 2, 0)
+      // Flip texture horizontally to correct the mirror caused by π rotation
+      finalTex = tex.clone()
+      finalTex.wrapS = THREE.RepeatWrapping
+      finalTex.repeat.set(-1, 1)
+      finalTex.offset.set(1, 0)
+      finalTex.needsUpdate = true
     } else {
+      // front-chest: 25% above midY
+      const chestY = midY + (box.max.y - midY) * 0.25
       wPos = new THREE.Vector3(0, chestY, box.max.z + 0.01)
       wRot = new THREE.Euler(0, 0, 0)
     }
 
     const size = new THREE.Vector3(logoSize, logoSize, projDepth)
-
-    // Build decal geometry — vertices come out in world space
     const decalGeo = new DecalGeometry(target, wPos, wRot, size)
 
-    // Convert to target mesh local space so it rotates with the shirt
+    // Convert world-space vertices → target mesh local space
     const invWorld = (target as THREE.Mesh).matrixWorld.clone().invert()
     decalGeo.applyMatrix4(invWorld)
 
     const mat = new THREE.MeshBasicMaterial({
-      map: tex,
+      map: finalTex,
       transparent: true,
       alphaTest: 0.04,
       depthWrite: false,

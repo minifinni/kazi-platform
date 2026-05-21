@@ -21,9 +21,8 @@ const GarmentViewer = dynamic(() => import('@/components/GarmentViewer'), {
 // ── Data ─────────────────────────────────────────────────────────────────────
 
 const GARMENT_TYPES = [
-  { id: 't-shirt',    label: 'T-Shirt',    code: 'GAR-001' },
-  { id: 'hoodie',     label: 'Hoodie',     code: 'GAR-002' },
-  { id: 'sweatshirt', label: 'Sweatshirt', code: 'GAR-003' },
+  { id: 't-shirt', label: 'T-Shirt', code: 'GAR-001' },
+  { id: 'hoodie',  label: 'Hoodie',  code: 'GAR-002' },
 ] as const;
 
 const FABRICS = [
@@ -48,9 +47,8 @@ const COLOURS = [
 ] as const;
 
 const PLACEMENTS = [
-  { id: 'front-chest', label: 'Front Chest',   note: 'Left breast, standard position' },
-  { id: 'back',        label: 'Back',           note: 'Centred, below collar' },
-  { id: 'sleeve',      label: 'Sleeve',         note: 'Left or right upper arm' },
+  { id: 'front-chest', label: 'Front Chest', note: 'Left breast, standard position' },
+  { id: 'back',        label: 'Back',        note: 'Centred, below collar' },
 ] as const;
 
 // Price per unit table (GBP)
@@ -542,13 +540,6 @@ export default function ConfigurePage() {
                     )}
                     {placement === 'back' && logoUrl && (
                       <image href={logoUrl} x="32" y="47" width="36" height="26" preserveAspectRatio="xMidYMid meet" />
-                    )}
-                    {/* Sleeve indicator */}
-                    {placement === 'sleeve' && !logoUrl && (
-                      <rect x="4" y="42" width="11" height="11" stroke="#E5232A" strokeWidth="1" fill="#E5232A" fillOpacity="0.15" />
-                    )}
-                    {placement === 'sleeve' && logoUrl && (
-                      <image href={logoUrl} x="4" y="42" width="11" height="11" preserveAspectRatio="xMidYMid meet" />
                     )}
                   </svg>
                 </div>
